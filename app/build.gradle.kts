@@ -51,8 +51,13 @@ android {
 
 dependencies {
 
+    // Network Calls (Retrofit)
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
+
+    // JSON to Kotlin Object Mapping
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+
+    // Image loading
     implementation("io.coil-kt:coil-compose:2.6.0")
 
     implementation(libs.androidx.core.ktx)
