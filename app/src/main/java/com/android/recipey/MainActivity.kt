@@ -51,8 +51,7 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun RecipeScreen(
     modifier: Modifier = Modifier,
-    navigateToDetailScreen: (Category) -> Unit,
-    viewState : MainViewModel.RecipeState
+    navigateToDetailScreen: (Category) -> Unit
 ) {
     val recipeViewModel : MainViewModel = viewModel()
     val viewState by recipeViewModel.categoriesState
