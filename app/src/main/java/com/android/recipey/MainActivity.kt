@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.aspectRatio
@@ -25,6 +26,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.compose.rememberNavController
 import coil.compose.rememberAsyncImagePainter
 import com.android.recipey.ui.theme.RecipeyTheme
 
@@ -32,13 +34,14 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
+            val navController = rememberNavController()
             RecipeyTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    RecipeScreen()
+                    RecipeApp(navController)
                 }
             }
         }
@@ -46,7 +49,11 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun RecipeScreen(modifier: Modifier = Modifier) {
+fun RecipeScreen(
+    modifier: Modifier = Modifier,
+    navigateToDetailScreen: (Category) -> Unit,
+    viewState : MainViewModel.RecipeState
+) {
     val recipeViewModel : MainViewModel = viewModel()
     val viewState by recipeViewModel.categoriesState
 
@@ -62,28 +69,31 @@ fun RecipeScreen(modifier: Modifier = Modifier) {
 
             else -> {
                 //Display Categories
-                CategoryScreen(categories = viewState.list)
+                CategoryScreen(categories = viewState.list, navigateToDetailScreen)
             }
         }
     }
 }
 
 @Composable
-fun CategoryScreen(categories : List<Category>) {
+fun CategoryScreen(categories : List<Category>, navigateToDetailScreen: (Category) -> Unit) {
     LazyVerticalGrid(columns = GridCells.Fixed(2), modifier = Modifier.fillMaxSize()) {
         items(categories) {
-                category -> CategoryItem(category = category)
+                category -> CategoryItem(category = category, navigateToDetailScreen)
         }
     }
 }
 
 // How each item looks like
 @Composable
-fun CategoryItem(category: Category) {
+fun CategoryItem(category: Category, navigateToDetailScreen : (Category) -> Unit) {
     Column (
         modifier = Modifier
             .padding(8.dp)
-            .fillMaxSize(),
+            .fillMaxSize()
+            .clickable {
+                navigateToDetailScreen(category)
+            },
         horizontalAlignment = Alignment.CenterHorizontally) {
         Image(
             painter = rememberAsyncImagePainter(category.strCategoryThumb),
@@ -104,6 +114,6 @@ fun CategoryItem(category: Category) {
 @Composable
 fun GreetingPreview() {
     RecipeyTheme {
-        RecipeScreen()
+
     }
 }
